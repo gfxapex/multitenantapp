@@ -9,4 +9,4 @@ class ApiRes {
     }
 }
 
-module.exports =  ApiRes ;
+module.exports = ApiRes;

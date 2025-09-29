@@ -1,5 +1,5 @@
-const { ApiError } = require ("./api_error.js");
-const { ApiRes } = require ("./api_res.js");
+const  ApiError  = require ("./api_error.js");
+const  ApiRes  = require ("./api_res.js");
 const fs = require ("fs");
 
  function globalErrorHandler(err, req, res,next) {

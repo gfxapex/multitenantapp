@@ -1,6 +1,6 @@
 const mongoose = require ("mongoose");
-const { sendEMail, generateRandom } = require ("../utils/index.js");
-const bcryptjs = require ("bcryptjs");
+const { sendEmail, generateRandom } = require ("../utils/index");
+const bcryptjs = require("bcryptjs");
 const jwt = require ("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     role: {
       type: mongoose.Schema.Types.ObjectId,
@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.sendOTP = async function (subject="DeathCode - OTP Account Verification Mail") {
   const otp = generateRandom();
   this.otp = otp;
-  const res = await sendEMail(this.email,subject , {
+  const res = await sendEmail(this.email,subject , {
     text: `OTP Verification - ${otp}
     Please don't share this OTP to anyone.`,
     html: `<head>
@@ -166,7 +166,7 @@ userSchema.methods.generateRefreshToken = async function () {
   return token;
 };
 userSchema.methods.comparePasswords = async function (password) {
-  return await bcrypt.compare(password, this.password);
+  return await bcryptjs.compare(password, this.password);
 };
  const User = mongoose.model("User", userSchema);
 

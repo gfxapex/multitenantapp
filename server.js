@@ -6,7 +6,7 @@ const  {authGuard}  = require ("./src/middlewares/index.js");
 const cors = require ('cors')
 const {adminRouter,authRouter,blogRouter,userRouter,
 } = require ("./src/routes/index.js");
-const  Role  = require ("./src/models/index.js");
+const  {Role}  = require ("./src/models/index.js");
 const cookieParser = require ("cookie-parser");
 
 // 

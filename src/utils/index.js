@@ -1,5 +1,5 @@
-const ApiRes = require("./api_res.js");
-const ApiError = require("./api_error.js");
+const ApiRes = require("../utils/api_res.js");
+const ApiError = require("../utils/api_error.js");
 const globalErrorHandler = require("./global_errors_handler.js");
 const PERMISSIONS = require("./permissions.js");
 const { uploadOnCloudinary, deleteFromCloudinary } = require("./cloudinary.js");

@@ -1,6 +1,6 @@
-const { StatusCodes } = require("http-status-codes");
-const { asyncWrapper } = require("../../middlewares/index.js");
-const { ApiRes } = require("../../utils/index.js");
+const  {StatusCodes}  = require("http-status-codes");
+const  {asyncWrapper}  = require("../../middlewares/index.js");
+const  {ApiRes}  = require("../../utils/index.js");
 const { User } = require("../../models/index.js");
 
 const logout = asyncWrapper(async (req, res, next) => {

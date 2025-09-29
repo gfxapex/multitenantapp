@@ -12,9 +12,9 @@ const updateBlog  = require("./blog/update_blog_controller.js");
 const { getBlog, getBlogs } = require("./blog/get_blog_controller.js");
 
 // User
-const { changePassword } = require("./user/change_password_controller.js");
+const  changePassword  = require("./user/change_password_controller.js");
 const { forgotPasswordSendOTP, forgotPasswordVerifyOTP } = require("./user/forgot_password_controller.js");
-const { updateProfilePhoto } = require("./user/update_profile_photo_controller.js");
+const  updateProfilePhoto  = require("./user/update_profile_photo_controller.js");
 const { verifyUserByOTP, sendVerifyOTP } = require("./user/verify_user_controller.js");
 const  verifyUsername  = require("./user/verify_username_controller.js");
 const  updateUser  = require("./user/update_user_controller.js");
