@@ -1,6 +1,6 @@
 const { StatusCodes } =require ("http-status-codes");
 const  {asyncWrapper}  =require ("../../middlewares/index.js");
-const {ApiError,ApiRes,validateEmail,validateUsername,} =require ("../../utils/index.js");
+const {ApiError ,ApiRes,validateEmail,validateUsername,} =require ("../../utils/index.js");
 const { User } =require ("../../models/index.js");
 
  const login = asyncWrapper(async (req, res, next) => {
@@ -35,7 +35,7 @@ const { User } =require ("../../models/index.js");
   }
 
   const accessToken = user.generateAccessToken(res);
-  const refreshToken = await user.generateRefreshToken();
+  const refreshToken = await user.generateRefreshToken(res);
 
   res.status(StatusCodes.OK).json(
     new ApiRes(

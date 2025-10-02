@@ -1,9 +1,14 @@
-const globalErrorHandling = async (err, req, res, next) => {
-  const status = err.status | 500;
-  const message = err.message | "Internal server error";
-  const extraDetails = err.extraDetails | "Error from Internal server";
+// src/utils/global_errors_handler.js
+const globalErrorHandling = (err, req, res, next) => {
+  // Prevent duplicate responses
+  if (res.headersSent) {
+    return next(err);
+  }
 
-  return req.status(status).json({message, extraDetails})
-}
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+};
 
 module.exports = globalErrorHandling;

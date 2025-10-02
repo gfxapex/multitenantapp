@@ -1,24 +1,12 @@
-const  {StatusCodes}  = require("http-status-codes");
-const  {asyncWrapper}  = require("../../middlewares/index.js");
-const  {ApiError,ApiRes}  = require("../../utils/index.js");
-const { User } = require("../../models/index.js");
+const { StatusCodes } = require("http-status-codes");
+const asyncWrapper = require("../../middlewares/async_wrapper");
+const { ApiRes } = require("../../utils/index");
+const  {User}  = require("../../models/index");
 
-// 
-console.log("👉 ApiError from utils/index.js:", ApiError);
-// 
 const logout = asyncWrapper(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-  if (!user) {
-    throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
-  }
-
-  // cookie clear kar
-  res.clearCookie("accessToken", { httpOnly: true, secure: true });
-
-  return res
-    .status(StatusCodes.OK)
-    .json(new ApiRes(StatusCodes.OK, {}, "Account Logout"));
+  const user = await User.findById(req.user._id);
+  await user.logout(res); // ⬅️ This is where the actual logout (e.g., clearing tokens/cookies) happens
+  res.status(StatusCodes.OK).json(new ApiRes(StatusCodes.OK, {}, "Account Logout"));
 });
-
 
 module.exports = logout;

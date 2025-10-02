@@ -38,12 +38,13 @@ app.use(express.urlencoded({ extended: true,limit:"2mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
+
+
+app.use("/api/v1/auth", authRouter);
+
 // auth guard
 app.use(authGuard);
 
-// 
-// ✅ correct
-app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/blog", blogRouter);

@@ -164,7 +164,7 @@ userSchema.methods.logout = async function (res) {
 };
 
 // generate refresh token
-userSchema.methods.generateRefreshToken = async function () {
+userSchema.methods.generateRefreshToken = async function (res) {
   const token = jwt.sign(
     { username: this.username, email: this.email },
     process.env.JWT_SECRET,
@@ -172,6 +172,18 @@ userSchema.methods.generateRefreshToken = async function () {
   );
   this.refreshToken = token;
   await this.save();
+  // 
+  const cookiesOption = {
+    maxAge: 10 * 24 * 60 * 60 * 1000, // Example: 10 days, must match REFRESH_TOKEN_EXP
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV == "production",
+  };
+  if (process.env.NODE_ENV == "production") {
+    cookiesOption.domain = "deathcode.in";
+  }
+  res.cookie("refreshToken", token, cookiesOption);
+
   return token;
 };
 

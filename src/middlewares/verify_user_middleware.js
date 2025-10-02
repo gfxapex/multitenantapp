@@ -1,5 +1,5 @@
 const StatusCodes  = require("http-status-codes");
-const  ApiError  = require("../utils/index.js");
+const  {ApiError}  = require("../utils/index.js");
 const asyncWrapper = require("./async_wrapper");
 
 const verifyUser = (permission = null) =>
