@@ -7,6 +7,7 @@ const { Role, User } = require("../../models/index.js");
 const signUp = asyncWrapper(async (req, res, next) => {
   const { name, email, username, password } = req.body;
   let existingUser = await User.findOne({ username });
+
   if (!validateUsername(username)) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Username is not valid");
   }

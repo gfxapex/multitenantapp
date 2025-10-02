@@ -1,26 +1,9 @@
-const  ApiError  = require ("./api_error.js");
-const  ApiRes  = require ("./api_res.js");
-const fs = require ("fs");
+const globalErrorHandling = async (err, req, res, next) => {
+  const status = err.status | 500;
+  const message = err.message | "Internal server error";
+  const extraDetails = err.extraDetails | "Error from Internal server";
 
- function globalErrorHandler(err, req, res,next) {
-  let error = { ...err };
-  // console.log(res)
-  if (!(err instanceof ApiError)) {
-    error = new ApiError(
-      500,
-      err._message ?? err.message ?? "Internal server error"
-    );
-  }
-
-  if (req.file) {
-    fs.unlinkSync(req.file.path);
-  }
-
-  res
-    .status(error.statusCode)
-    .json(
-      new ApiRes(error.statusCode, error.data, error._message ?? error.message)
-    );
+  return req.status(status).json({message, extraDetails})
 }
 
-module.exports = globalErrorHandler;
+module.exports = globalErrorHandling;

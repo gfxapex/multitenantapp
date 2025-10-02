@@ -1,7 +1,7 @@
-const mongoose = require ("mongoose");
-const { sendEmail, generateRandom } = require ("../utils/index");
+const mongoose = require("mongoose");
+const { sendEmail, generateRandom } = require("../utils/index");
 const bcryptjs = require("bcryptjs");
-const jwt = require ("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -52,13 +52,15 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
+
 );
 
-userSchema.methods.sendOTP = async function (subject="DeathCode - OTP Account Verification Mail") {
+// send otp
+userSchema.methods.sendOTP = async function (subject = "DeathCode - OTP Account Verification Mail") {
   const otp = generateRandom();
   this.otp = otp;
-  const res = await sendEmail(this.email,subject , {
+  const res = await sendEmail(this.email, subject, {
     text: `OTP Verification - ${otp}
     Please don't share this OTP to anyone.`,
     html: `<head>
@@ -113,6 +115,8 @@ userSchema.methods.sendOTP = async function (subject="DeathCode - OTP Account Ve
   await this.save();
   return res;
 };
+
+// bcrypt js
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const salt = await bcryptjs.genSalt(10);
@@ -122,6 +126,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// generate access token
 userSchema.methods.generateAccessToken = function (res) {
   const token = jwt.sign(
     { username: this.username, email: this.email },
@@ -140,6 +145,8 @@ userSchema.methods.generateAccessToken = function (res) {
   res.cookie("accessToken", token, cookiesOption);
   return token;
 };
+
+// logout
 userSchema.methods.logout = async function (res) {
   const cookiesOption = {
     maxAge: 0,
@@ -153,8 +160,10 @@ userSchema.methods.logout = async function (res) {
   res.cookie("accessToken", "", cookiesOption);
   this.refreshToken = "";
   await this.save();
-  return 
+  return
 };
+
+// generate refresh token
 userSchema.methods.generateRefreshToken = async function () {
   const token = jwt.sign(
     { username: this.username, email: this.email },
@@ -165,9 +174,12 @@ userSchema.methods.generateRefreshToken = async function () {
   await this.save();
   return token;
 };
+
+
+// compare password
 userSchema.methods.comparePasswords = async function (password) {
   return await bcryptjs.compare(password, this.password);
 };
- const User = mongoose.model("User", userSchema);
 
- module .exports = User;
+const User = mongoose.model("User", userSchema);
+module.exports = User;
