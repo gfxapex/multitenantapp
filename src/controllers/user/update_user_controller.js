@@ -1,4 +1,4 @@
-const { StatusCodes } = require("http-status-codes");
+const {httpStatuscode} = require("http-status-codes");
 const  {asyncWrapper}  = require("../../middlewares/index.js");
 const { User } = require("../../models/index.js");
 const { ApiError, ApiRes, validateUsername } = require("../../utils/index.js");
@@ -10,18 +10,18 @@ const updateUser = asyncWrapper(async (req, res, next) => {
   user.name = name || user.name;
   if (username) {
     if (!validateUsername(username)) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid Username");
+      throw new ApiError(httpStatuscode.BAD_REQUEST, "Invalid Username");
     }
     const isUserExist = await User.exists({ username });
     if (isUserExist && isUserExist.username !== user.username) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, "Username already in use");
+      throw new ApiError(httpStatuscode.BAD_REQUEST, "Username already in use");
     }
     user.username = username;
   }
   await user.save();
-  res.status(StatusCodes.OK).json(
+  res.status(httpStatuscode.OK).json(
     new ApiRes(
-      StatusCodes.OK,
+      httpStatuscode.OK,
       {
         username: user.username,
         name: user.name,

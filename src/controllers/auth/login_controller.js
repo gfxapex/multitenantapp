@@ -1,4 +1,4 @@
-const { StatusCodes } =require ("http-status-codes");
+const {httpStatuscode} =require ("http-status-codes");
 const  {asyncWrapper}  =require ("../../middlewares/index.js");
 const {ApiError ,ApiRes,validateEmail,validateUsername,} =require ("../../utils/index.js");
 const { User } =require ("../../models/index.js");
@@ -7,11 +7,11 @@ const { User } =require ("../../models/index.js");
   const { email, username, password } = req.body;
   if (username) {
     if (!validateUsername(username)) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, "Username is not valid");
+      throw new ApiError(httpStatuscode.BAD_REQUEST, "Username is not valid");
     }
   } else if (email) {
     if (!validateEmail(email)) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, "Email is not valid");
+      throw new ApiError(httpStatuscode.BAD_REQUEST, "Email is not valid");
     }
   }
 
@@ -19,27 +19,27 @@ const { User } =require ("../../models/index.js");
     $or: [{ email }, { username }],
   }).populate("role");
   if (!user) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "User not exist");
+    throw new ApiError(httpStatuscode.BAD_REQUEST, "User not exist");
   }
 
   const isValidPassword = await user.comparePasswords(password);
   if (!isValidPassword) {
-    throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid Credentials");
+    throw new ApiError(httpStatuscode.UNAUTHORIZED, "Invalid Credentials");
   }
 
   if (user.isBan) {
-    throw new ApiError(StatusCodes.FORBIDDEN, "User is banned");
+    throw new ApiError(httpStatuscode.FORBIDDEN, "User is banned");
   }
   if (!user.isVerified) {
-    throw new ApiError(StatusCodes.FORBIDDEN, "User is not verified");
+    throw new ApiError(httpStatuscode.FORBIDDEN, "User is not verified");
   }
 
   const accessToken = user.generateAccessToken(res);
   const refreshToken = await user.generateRefreshToken(res);
 
-  res.status(StatusCodes.OK).json(
+  res.status(httpStatuscode.OK).json(
     new ApiRes(
-      StatusCodes.OK,
+      httpStatuscode.OK,
       {
         username: user.username,
         email: user.email,

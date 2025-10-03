@@ -1,4 +1,4 @@
-const { StatusCodes } = require ("http-status-codes");
+const {httpStatuscode }= require ("http-status-codes");
 const {asyncWrapper}  = require ("../../../middlewares/index.js");
 const { Role, User } = require ("../../../models/index.js");
 const { ApiError, ApiRes, PERMISSIONS } = require ("../../../utils/index.js");
@@ -8,26 +8,26 @@ const { ApiError, ApiRes, PERMISSIONS } = require ("../../../utils/index.js");
   if (username) {
     const user = await User.findOne({ username });
     if (!user) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, "user not exist");
+      throw new ApiError(httpStatuscode.BAD_REQUEST, "user not exist");
     }
     return res
-      .status(StatusCodes.OK)
-      .json(new ApiRes(StatusCodes.OK, user.permissions));
+      .status(httpStatuscode.OK)
+      .json(new ApiRes(httpStatuscode.OK, user.permissions));
   } else if (roleValue) {
     const role = await Role.findOne({ roleValue });
     if (!role) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, "role not exist");
+      throw new ApiError(httpStatuscode.BAD_REQUEST, "role not exist");
     }
     return res
-      .status(StatusCodes.OK)
-      .json(new ApiRes(StatusCodes.OK, role.permissions));
+      .status(httpStatuscode.OK)
+      .json(new ApiRes(httpStatuscode.OK, role.permissions));
   } else {
     const permissionsList = Object.values(PERMISSIONS).flatMap((group) =>
       Object.values(group)
     );
     return res
-      .status(StatusCodes.OK)
-      .json(new ApiRes(StatusCodes.OK, permissionsList));
+      .status(httpStatuscode.OK)
+      .json(new ApiRes(httpStatuscode.OK, permissionsList));
   }
 });
 

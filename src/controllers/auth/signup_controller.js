@@ -1,4 +1,4 @@
-const { StatusCodes } = require("http-status-codes");
+const {httpStatuscode} = require("http-status-codes");
 const  {asyncWrapper}  = require("../../middlewares/index.js");
 const { ApiError, ApiRes, validateEmail, validateUsername,
   PERMISSIONS } = require("../../utils/index.js");
@@ -9,21 +9,21 @@ const signUp = asyncWrapper(async (req, res, next) => {
   let existingUser = await User.findOne({ username });
 
   if (!validateUsername(username)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Username is not valid");
+    throw new ApiError(httpStatuscode.BAD_REQUEST, "Username is not valid");
   }
   // 
   if (existingUser) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Username already exist.");
+    throw new ApiError(httpStatuscode.BAD_REQUEST, "Username already exist.");
   }
   // 
   if (!validateEmail(email)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Email is not valid");
+    throw new ApiError(httpStatuscode.BAD_REQUEST, "Email is not valid");
   }
 
   existingUser = await User.findOne({ email });
   // 
   if (existingUser) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Email already exist.");
+    throw new ApiError(httpStatuscode.BAD_REQUEST, "Email already exist.");
   }
   // 
   const user = new User({ name, password, email, username });
@@ -37,7 +37,7 @@ const signUp = asyncWrapper(async (req, res, next) => {
   } else {
     role = await Role.findOne({ roleValue: "user" });
     if (!role) {
-      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Role not found in DB");
+      throw new ApiError(httpStatuscode.INTERNAL_SERVER_ERROR, "Role not found in DB");
     }
     user.role = role._id;
   }
@@ -51,9 +51,9 @@ const signUp = asyncWrapper(async (req, res, next) => {
   await user.save();
   await user.sendOTP();
 
-  return res.status(StatusCodes.CREATED).json(
+  return res.status(httpStatuscode.CREATED).json(
     new ApiRes(
-      StatusCodes.CREATED,
+      httpStatuscode.CREATED,
       {
         username: user.username,
         email: user.email,

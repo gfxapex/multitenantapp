@@ -1,15 +1,24 @@
-const { StatusCodes } = require("http-status-codes");
+const {httpStatuscode} = require("http-status-codes");
 const { asyncWrapper } = require("../../middlewares/index.js");
 const jwt = require("jsonwebtoken");
 const { ApiError, ApiRes } = require("../../utils/index.js");
 const { User } = require("../../models/index.js");
 
+
+
+
 const tokenController = asyncWrapper(async (req, res, next) => {
     // Assuming client sends the refresh token in the BODY.
-    const { refreshToken } = req.body; 
+    const  {refreshToken}  = req.cookies || {}; 
+
+ console.log("================ DIAGNOSTIC START ================");
+    console.log("Request Body:", req.body);
+    console.log("Request Headers (Content-Type):", req.headers['content-type']);
+    console.log("Request Cookies:", req.cookies);
+    console.log("================ DIAGNOSTIC END ================");
 
     if (!refreshToken) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Refresh token is missing. Please provide it in the request body.");
+        throw new ApiError(httpStatuscode.UNAUTHORIZED, "Refresh token is missing. Please provide it in the request body.");
     }
     try {
         // 1. Validate the Refresh Token
@@ -25,8 +34,8 @@ const tokenController = asyncWrapper(async (req, res, next) => {
 
         // 3. Check for Token Replay (Security Check)
         // Use UNAUTHORIZED for security issues, not BAD_REQUEST.
-        if (!user || user.refreshToken !== refreshToken) { 
-            throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid Token or Token compromised. Please log in again.");
+        if (!user || user.refreshToken != refreshToken) { 
+            throw new ApiError(httpStatuscode.BAD_REQUEST, "Invalid Token or Token compromised. Please log in again.");
         }
         
         // 4. Generate New Access Token (Sets accessToken cookie)
@@ -35,14 +44,13 @@ const tokenController = asyncWrapper(async (req, res, next) => {
         // 5. Generate New Refresh Token (Sets new refreshToken cookie AND saves to DB inside the method)
         const newRefreshToken = await user.generateRefreshToken(res); 
         
-        // 🛑 REMOVED REDUNDANT DATABASE SAVE: 
-        // user.refreshToken = newRefreshToken; 
-        // await user.save(); 
+       user.refreshToken = newRefreshToken;
+    await user.save();
 
         // 6. Send Response
-        res.status(StatusCodes.OK).json(
+        res.status(httpStatuscode.OK).json(
             new ApiRes(
-                StatusCodes.OK,
+                httpStatuscode.OK,
                 {
                     accessToken,
                     refreshToken: newRefreshToken,
@@ -54,7 +62,7 @@ const tokenController = asyncWrapper(async (req, res, next) => {
         // Handle JWT-specific errors (expired, invalid signature)
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
              // Treat all JWT verification failures as unauthorized.
-             throw new ApiError(StatusCodes.UNAUTHORIZED, "Session expired or token invalid. Please log in again.");
+             throw new ApiError(httpStatuscode.UNAUTHORIZED, "Session expired or token invalid. Please log in again.");
         }
         
         next(error);

@@ -1,5 +1,5 @@
 // src/controllers/blog/create_blog_controller.js
-const { StatusCodes } = require("http-status-codes");
+const {httpStatuscode} = require("http-status-codes");
 const { asyncWrapper } = require("../../middlewares");
 const { ApiError, ApiRes, uploadOnCloudinary } = require("../../utils"); // adjust if your util names/paths differ
 const { Blog } = require("../../models");
@@ -10,7 +10,7 @@ const createBlog = asyncWrapper(async (req, res) => {
   const { title, description, content } = req.body;
 
   if (!title) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Title is required");
+    throw new ApiError(httpStatuscode.BAD_REQUEST, "Title is required");
   }
 
   const blogData = {
@@ -29,8 +29,8 @@ const createBlog = asyncWrapper(async (req, res) => {
   const blog = await Blog.create(blogData);
 
   res
-    .status(StatusCodes.CREATED)
-    .json(new ApiRes(StatusCodes.CREATED, blog, "Blog created"));
+    .status(httpStatuscode.CREATED)
+    .json(new ApiRes(httpStatuscode.CREATED, blog, "Blog created"));
 });
 
 module.exports =  createBlog ;
